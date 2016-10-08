@@ -7,7 +7,9 @@ def add_layer(inputs, in_size, out_size, activation_function=None):
     # add one more layer and return the output of this layer
     Weights = tf.Variable(tf.random_normal([in_size, out_size]))
     biases = tf.Variable(tf.zeros([1, out_size]) + 0.1)
+    
     Wx_plus_b = tf.matmul(inputs, Weights) + biases
+    #Wx_plus_b = tf.nn.dropout(Wx_plus_b, keep_prob)  这句是dropout 防止过拟合  keep_prob 就是保持多少不被 drop，在迭代时在 sess.run 中被 feed:
     if activation_function is None:
         outputs = Wx_plus_b
     else:
@@ -32,10 +34,10 @@ l1 = add_layer(xs, 1, 10, activation_function=tf.nn.relu)
 prediction = add_layer(l1, 10, 1, activation_function=None)
 
 # 4.定义 loss 表达式
+# cross_entropy
 # the error between prediciton and real data    
 loss = tf.reduce_mean(tf.reduce_sum(tf.square(ys - prediction),
                      reduction_indices=[1]))
-
 # 5.选择 optimizer 使 loss 达到最小                   
 # 这一行定义了用什么方式去减少 loss，学习率是 0.1       
 train_step = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
